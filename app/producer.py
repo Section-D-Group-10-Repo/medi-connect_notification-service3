@@ -2,7 +2,7 @@ import pika
 import json
 from utils import validate_phone_number, validate_email
 
-def publish_message(patient_id, doctor_id, message, message_type, email, phone_number):
+def publish_message(patient_id, doctor_id, message, message_type, email, phone_number, operation):
     """
     Publishes a message to the RabbitMQ queue.
     Includes validation for email and phone number.
@@ -32,11 +32,14 @@ def publish_message(patient_id, doctor_id, message, message_type, email, phone_n
             "phone_number": phone_number  # Added phone number
         }
 
-        # Publish message to the queue
+        # Publish message to the queue with headers
         channel.basic_publish(
             exchange='',
             routing_key='RPC-QUEUE',
             body=json.dumps(message_data),
+            properties=pika.BasicProperties(
+                headers={'operation': operation}  # Add the operation header
+            )
         )
 
         print(f"Message sent: {message_data}")
@@ -52,5 +55,6 @@ if __name__ == '__main__':
         message="You have a new appointment.",
         message_type="alert",
         email="patient@example.com",
-        phone_number="+1234567890"
+        phone_number="+1234567890",
+        operation="notify patient"  # Specify the operation
     )
