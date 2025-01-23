@@ -1,0 +1,32 @@
+# .gitignore
+
+# Ignore .env file
+.env
+
+# Ignore virtual environment folders
+venv/
+env/
+.venv/
+
+# Ignore installed packages
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore distribution and build files
+dist/
+build/
+*.egg-info/
+
+# Ignore local development files
+*.log
+*.pot
+*.pyc
+*.swp
