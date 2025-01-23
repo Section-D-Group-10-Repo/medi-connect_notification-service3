@@ -1,3 +1,4 @@
+# consumer.py
 import sys
 import os
 import pika
@@ -10,6 +11,7 @@ from sqlalchemy import create_engine
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.models.models import Notification  # Import your Notification model
+from app.email_service import send_email  # Import the email service
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -80,28 +82,36 @@ def process_message(ch, method, properties, body):
         if operation == "notify patient":
             # Send notification to the patient
             patient_id = data.get('patient_id')
-            if not patient_id:
-                logging.error("Patient ID is required for 'notify patient' operation")
+            patient_email = data.get('email')  # Assuming the email is included in the message
+            if not patient_id or not patient_email:
+                logging.error("Patient ID and email are required for 'notify patient' operation")
                 ch.basic_nack(delivery_tag=method.delivery_tag)
                 return
 
             logging.info(f"Sending notification to patient: {patient_id}")
-            # Here you can add logic to send the notification to the patient (e.g., via SMS, email, etc.)
-            # For now, we'll just log it.
-            logging.info(f"Notification for patient {patient_id}: {data['message']}")
+            # Send email to the patient
+            send_email(
+                to_email=patient_email,
+                subject="New Notification",
+                body=data['message']
+            )
 
         elif operation == "notify doctor":
             # Send notification to the doctor
             doctor_id = data.get('doctor_id')
-            if not doctor_id:
-                logging.error("Doctor ID is required for 'notify doctor' operation")
+            doctor_email = data.get('email')  # Assuming the email is included in the message
+            if not doctor_id or not doctor_email:
+                logging.error("Doctor ID and email are required for 'notify doctor' operation")
                 ch.basic_nack(delivery_tag=method.delivery_tag)
                 return
 
             logging.info(f"Sending notification to doctor: {doctor_id}")
-            # Here you can add logic to send the notification to the doctor (e.g., via SMS, email, etc.)
-            # For now, we'll just log it.
-            logging.info(f"Notification for doctor {doctor_id}: {data['message']}")
+            # Send email to the doctor
+            send_email(
+                to_email=doctor_email,
+                subject="New Notification",
+                body=data['message']
+            )
 
         else:
             logging.error(f"Invalid operation: {operation}")
