@@ -1,19 +1,25 @@
 from app import create_app, db
 from app.consumer import start_consumer
 import threading
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Create Flask app instance
 app = create_app()
 
 def run_consumer():
     """
-    Function to start the RabbitMQ consumer.
+    Function to start the RabbitMQ consumer in a separate thread.
+    Logs errors if the consumer fails.
     """
     try:
+        logger.info("Starting RabbitMQ consumer...")
         start_consumer()
     except Exception as e:
-        # Log the error (use proper logging in production)
-        print(f"Consumer error: {e}")
+        logger.error(f"Consumer error: {e}")
 
 if __name__ == '__main__':
     # Start RabbitMQ consumer in a separate thread
@@ -23,7 +29,17 @@ if __name__ == '__main__':
 
     # Initialize the Flask app and database
     with app.app_context():
-        db.create_all()  # Create tables if they don't exist
+        try:
+            logger.info("Initializing the database...")
+            db.create_all()  # Create tables if they don't exist
+            logger.info("Database initialized successfully.")
+        except Exception as db_error:
+            logger.error(f"Database initialization error: {db_error}")
+            raise db_error
 
     # Start the Flask application
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    try:
+        logger.info("Starting the Flask application...")
+        app.run(debug=True, host='0.0.0.0', port=5000)
+    except Exception as app_error:
+        logger.error(f"Flask application error: {app_error}")
