@@ -15,7 +15,7 @@ def create_app():
     db.init_app(app)
 
     # Register blueprints
-    from app.routes import main_bp  # Import your blueprint here
+    from app.routes.routes import main_bp  # Import your blueprint here
     app.register_blueprint(main_bp)
 
     return app
