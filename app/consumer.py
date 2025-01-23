@@ -1,7 +1,7 @@
 import pika
 import json
 from app import db
-from app.models import Notification
+from app.models.models import Notification
 from app.config import Config
 
 def callback(ch, method, properties, body):
