@@ -54,7 +54,7 @@ if __name__ == '__main__':
         doctor_id="456",
         message="You have a new appointment.",
         message_type="alert",
-        email="patient@example.com",
+        email="natnael.meseret.w@gmail.com",
         phone_number="+1234567890",
         operation="notify patient"  # Specify the operation
     )
