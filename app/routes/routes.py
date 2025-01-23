@@ -1,4 +1,13 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Depends
+from ..database import SessionLocal
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # Define the Blueprint
 main_bp = Blueprint('main', __name__)
@@ -13,15 +22,17 @@ def home():
 
 # Dummy notifications route
 @main_bp.route('/', methods=['GET'])
-def get_notifications():
+def get_notifications(db: SessionLocal = Depends(get_db)):
     """
     Route to fetch all notifications (Dummy response for now).
     """
-    dummy_notifications = [
-        {"id": 1, "message": "First notification", "type": "info", "read": False},
-        {"id": 2, "message": "Second notification", "type": "alert", "read": True},
-    ]
-    return jsonify(dummy_notifications)
+    notifications = db.query(Notification).all()
+    return notifications
+    # dummy_notifications = [
+    #     {"id": 1, "message": "First notification", "type": "info", "read": False},
+    #     {"id": 2, "message": "Second notification", "type": "alert", "read": True},
+    # ]
+    # return jsonify(dummy_notifications)
 
 # Fetch notifications for a specific patient
 @main_bp.route('/patient/<string:patient_id>', methods=['GET'])

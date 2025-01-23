@@ -27,27 +27,27 @@ def save_notification(data):
         )
         db.session.add(notification)
         db.session.commit()
-        logging.info(f"Notification saved: {notification}")
+        logging.info(f"Notification saved")
         return notification
     except Exception as e:
-        logging.error(f"Failed to save notification: {e}")
+        logging.error(f"Failed to save notification")
         return None
 
 def process_message(ch, method, properties, body):
     try:
-        logging.info(f"Message received: {body}")
+        logging.info(f"Message received")
         data = json.loads(body)
         logging.info("Processing message...")
 
         # Save notification to DB
         notification = save_notification(data)
         if notification:
-            logging.info(f"Successfully saved notification: {notification}")
+            logging.info(f"Successfully saved notification")
         
         # Acknowledge the message to RabbitMQ
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
-        logging.error(f"Error processing message: {e}")
+        print(f"Error processing message")
         ch.basic_nack(delivery_tag=method.delivery_tag)
 
 def start_consumer():
@@ -67,10 +67,10 @@ def start_consumer():
             on_message_callback=process_message
         )
 
-        logging.info("Waiting for messages on RPC-QUEUE...")
         channel.start_consuming()
     except Exception as e:
-        logging.error(f"Error starting the consumer: {e}")
+        print(f"Error starting the consumer")
 
 if __name__ == "__main__":
+    print("suuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
     start_consumer()
