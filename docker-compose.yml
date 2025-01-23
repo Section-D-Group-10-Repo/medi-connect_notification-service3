@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  notification_service:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - rabbitmq
+    environment:
+      DATABASE_URI: "sqlite:///notifications.db"
+      RABBITMQ_URI: "localhost"
+      RABBITMQ_QUEUE: "notifications"
