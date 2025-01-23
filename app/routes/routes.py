@@ -18,5 +18,6 @@ def notifications():
     dummy_notifications = [
         {"id": 1, "message": "First notification", "type": "info"},
         {"id": 2, "message": "Second notification", "type": "alert"},
+        {"id": 3, "message": "Second notification", "type": "alert"},
     ]
     return jsonify(dummy_notifications)
