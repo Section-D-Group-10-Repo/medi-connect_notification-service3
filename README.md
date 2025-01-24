@@ -1,3 +1,5 @@
+![Uploading image.png…]()
+
 # Medi-Connect Notifications
 
 Medi-Connect Notifications is a microservice designed to handle notifications for patients and doctors in a healthcare system. It consumes messages from a RabbitMQ queue, processes them, and sends notifications (e.g., emails) to the respective recipients. Notifications are also stored in a SQLite database for future reference.
